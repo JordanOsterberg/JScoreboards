@@ -83,6 +83,7 @@ public class JScoreboard {
 
                     if (color != secondColor) {
                         colorCodeOptions.add(color + " " + secondColor);
+                        if (colorCodeOptions.size() == lines.size()) break;
                     }
                 }
             }
