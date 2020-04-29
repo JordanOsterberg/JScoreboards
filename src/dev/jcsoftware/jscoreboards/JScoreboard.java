@@ -218,8 +218,13 @@ public class JScoreboard {
             }
         }
 
+        for (JScoreboardPlayerTeam team : teams) {
+            team.destroy();
+        }
+
         this.activePlayers.clear();
         this.lines.clear();
+        this.teams.clear();
         this.scoreboard = null;
     }
 
