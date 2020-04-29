@@ -99,10 +99,6 @@ public class JScoreboardPlayerTeam {
     }
 
     protected void destroy() {
-        for (UUID uuid : this.players) {
-            removePlayer(uuid);
-        }
-
         if (this.scoreboard instanceof JPerPlayerScoreboard) {
             for (UUID uuid : this.players) {
                 Player player = Bukkit.getPlayer(uuid);
@@ -113,6 +109,10 @@ public class JScoreboardPlayerTeam {
         } else {
             Scoreboard scoreboard = this.scoreboard.toBukkitScoreboard();
             scoreboard.getTeam(name).unregister();
+        }
+
+        for (UUID uuid : this.players) {
+            removePlayer(uuid);
         }
     }
 
