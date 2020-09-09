@@ -10,16 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class JScoreboardPlayerTeam {
+public class JScoreboardTeam {
 
     private String name;
     private String displayName;
-    private List<UUID> players = new ArrayList<>();
-    private JScoreboard scoreboard;
+    private final ChatColor teamColor;
+    private final List<UUID> entities = new ArrayList<>();
+    private final JScoreboard scoreboard;
 
-    protected JScoreboardPlayerTeam(String name, String displayName, JScoreboard scoreboard) {
+    protected JScoreboardTeam(String name, String displayName, ChatColor teamColor, JScoreboard scoreboard) {
         this.name = name;
         this.displayName = displayName;
+        this.teamColor = teamColor;
         this.scoreboard = scoreboard;
     }
 
@@ -41,7 +43,7 @@ public class JScoreboardPlayerTeam {
 
     public void refresh() {
         if (this.scoreboard instanceof JPerPlayerScoreboard) {
-            for (UUID uuid : this.players) {
+            for (UUID uuid : this.entities) {
                 Player player = Bukkit.getPlayer(uuid);
                 if (player != null) {
                     refresh(player.getScoreboard());
@@ -52,20 +54,30 @@ public class JScoreboardPlayerTeam {
         }
     }
 
-    private void refresh(Scoreboard scoreboard) {
+    public Team toBukkitTeam(Scoreboard bukkitScoreboard) {
         Team team;
 
-        if (scoreboard.getTeam(name) != null) {
-            team = scoreboard.getTeam(name);
+        if (bukkitScoreboard.getTeam(name) != null) {
+            team = bukkitScoreboard.getTeam(name);
         } else {
-            team = scoreboard.registerNewTeam(name);
+            team = bukkitScoreboard.registerNewTeam(name);
         }
+
+        if (team == null) return null;
+
+        return team;
+    }
+
+    public void refresh(Scoreboard scoreboard) {
+        Team team = toBukkitTeam(scoreboard);
+
+        if (team == null) return;
 
         for (String entry : team.getEntries()) {
             team.removeEntry(entry);
         }
 
-        for (UUID playerUUID : players) {
+        for (UUID playerUUID : entities) {
             Player player = Bukkit.getPlayer(playerUUID);
 
             if (player != null) {
@@ -73,47 +85,49 @@ public class JScoreboardPlayerTeam {
             }
         }
 
+        team.setColor(teamColor);
         team.setPrefix(ChatColor.translateAlternateColorCodes('&', getDisplayName()));
     }
 
     public void addPlayer(Player player) {
-        addPlayer(player.getUniqueId());
+        addEntity(player.getUniqueId());
     }
 
-    public void addPlayer(UUID uuid) {
-        if (players.contains(uuid)) return;
+    public void addEntity(UUID uuid) {
+        if (entities.contains(uuid)) return;
 
-        players.add(uuid);
+        entities.add(uuid);
 
         refresh();
     }
 
     public void removePlayer(Player player) {
-        removePlayer(player.getUniqueId());
+        removeEntity(player.getUniqueId());
     }
 
-    public void removePlayer(UUID uuid) {
-        players.remove(uuid);
+    public void removeEntity(UUID uuid) {
+        entities.remove(uuid);
 
         refresh();
     }
 
-    protected void destroy() {
+    public void destroy() {
         if (this.scoreboard instanceof JPerPlayerScoreboard) {
-            for (UUID uuid : this.players) {
+            for (UUID uuid : this.entities) {
                 Player player = Bukkit.getPlayer(uuid);
+
                 if (player != null) {
-                    player.getScoreboard().getTeam(name).unregister();
+                    Team team = player.getScoreboard().getTeam(name);
+                    if (team != null) team.unregister();
                 }
             }
         } else {
             Scoreboard scoreboard = this.scoreboard.toBukkitScoreboard();
-            scoreboard.getTeam(name).unregister();
+            Team team = scoreboard.getTeam(name);
+            if (team != null) team.unregister();
         }
 
-        for (UUID uuid : this.players) {
-            removePlayer(uuid);
-        }
+        entities.clear();
     }
 
     public JScoreboard getScoreboard() {

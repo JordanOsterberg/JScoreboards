@@ -1,0 +1,12 @@
+dev\jcsoftware\jscoreboards\exception\ScoreboardTeamNameTooLongException.class
+dev\jcsoftware\jscoreboards\JScoreboardOptions.class
+dev\jcsoftware\jscoreboards\exception\ScoreboardManagerNullException.class
+dev\jcsoftware\jscoreboards\JScoreboardPlayerTeam.class
+dev\jcsoftware\jscoreboards\JScoreboardTabHealthStyle.class
+dev\jcsoftware\jscoreboards\JScoreboard.class
+dev\jcsoftware\jscoreboards\exampleplugin\PerPlayerExamplePlugin.class
+dev\jcsoftware\jscoreboards\exception\ScoreboardLineTooLongException.class
+dev\jcsoftware\jscoreboards\JPerPlayerScoreboard.class
+dev\jcsoftware\jscoreboards\exception\DuplicateTeamCreatedException.class
+dev\jcsoftware\jscoreboards\exampleplugin\TNTTagExamplePlugin.class
+dev\jcsoftware\jscoreboards\exception\JScoreboardException.class
