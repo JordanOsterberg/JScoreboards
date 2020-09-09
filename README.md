@@ -5,7 +5,6 @@ JScoreboards is currently in **alpha** development- there will be bugs and I rec
 
 If you find bugs- report them as a GitHub issue. Thanks!
 
-Maven repository information:
-
+Maven repository information: [JitPack](https://jitpack.io/#JordanOsterberg/JScoreboards/0.0.1-ALPHA)
 
 See [LICENSE.md](LICENSE.md) for license information.
