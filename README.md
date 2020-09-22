@@ -26,6 +26,6 @@ If you find bugs- report them as a GitHub issue. Thanks!
 
 [![](https://jitpack.io/v/JordanOsterberg/JScoreboards.svg)](https://jitpack.io/#JordanOsterberg/JScoreboards)
 
-See [JitPack](https://jitpack.io/#JordanOsterberg/JScoreboards/0.0.1-ALPHA) for more information / the most up-to-date versioning if you're having trouble. 
+See [JitPack](https://jitpack.io/#JordanOsterberg/JScoreboards) for more information / the most up-to-date versioning if you're having trouble. 
 
 See [LICENSE.md](LICENSE.md) for license information.
