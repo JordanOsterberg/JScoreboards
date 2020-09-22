@@ -18,9 +18,9 @@ If you find bugs- report them as a GitHub issue. Thanks!
 **Dependency (type latest version in for version)**
 ```
 <dependency>
-	  <groupId>com.github.JordanOsterberg</groupId>
-	  <artifactId>JScoreboards</artifactId>
-	  <version></version>
+    <groupId>com.github.JordanOsterberg</groupId>
+    <artifactId>JScoreboards</artifactId>
+    <version></version>
 </dependency>
 ```
 
