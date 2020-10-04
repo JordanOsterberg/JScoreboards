@@ -50,17 +50,15 @@ public class JScoreboard {
         updateScoreboard(scoreboard, lines);
     }
 
-    private final Map<Scoreboard, List<String>> previousLinesMap = new HashMap<>();
+    private final Map<Scoreboard, Integer> previousLinesSizeMap = new HashMap<>();
 
     /**
      * Update the scoreboard for all players it is shown to.
      * @throws JScoreboardException If a String within the lines array is over 64 characters, this exception is thrown.
      */
     protected void updateScoreboard(Scoreboard scoreboard, List<String> lines) throws JScoreboardException {
-        Objective objective;
-
         // Size difference means unregister objective to reset and re-register teams correctly
-        if (previousLinesMap.containsKey(scoreboard) && previousLinesMap.get(scoreboard).size() != lines.size()) {
+        if (previousLinesSizeMap.containsKey(scoreboard) && previousLinesSizeMap.get(scoreboard) != lines.size()) {
             for (Team team : scoreboard.getTeams()) {
                 if (team.getName().contains("line")) {
                     team.unregister();
@@ -68,7 +66,9 @@ public class JScoreboard {
             }
         }
 
-        previousLinesMap.put(scoreboard, lines);
+        previousLinesSizeMap.put(scoreboard, lines.size());
+
+        Objective objective;
 
         if (scoreboard.getObjective("dummy") == null) {
             objective = scoreboard.registerNewObjective("dummy", "dummy", "dummy");
@@ -128,6 +128,8 @@ public class JScoreboard {
 
             if (team != null) {
                 team.setPrefix(color(entry));
+                team.getEntries().forEach(team::removeEntry);
+                team.addEntry(colorCodeOptions.get(score));
             } else {
                 team = scoreboard.registerNewTeam("line" + score);
                 team.addEntry(colorCodeOptions.get(score));
