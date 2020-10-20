@@ -134,4 +134,12 @@ public class JScoreboardTeam {
         return scoreboard;
     }
 
+    public List<UUID> getEntities() {
+        return entities;
+    }
+
+    public boolean isOnTeam(UUID uuid) {
+        return getEntities().contains(uuid);
+    }
+
 }

@@ -59,11 +59,13 @@ public class JScoreboard {
     protected void updateScoreboard(Scoreboard scoreboard, List<String> lines) throws JScoreboardException {
         // Size difference means unregister objective to reset and re-register teams correctly
         if (previousLinesSizeMap.containsKey(scoreboard) && previousLinesSizeMap.get(scoreboard) != lines.size()) {
-            for (Team team : scoreboard.getTeams()) {
+            scoreboard.clearSlot(DisplaySlot.SIDEBAR);
+            scoreboard.getEntries().forEach(scoreboard::resetScores);
+            scoreboard.getTeams().forEach(team -> {
                 if (team.getName().contains("line")) {
                     team.unregister();
                 }
-            }
+            });
         }
 
         previousLinesSizeMap.put(scoreboard, lines.size());
@@ -209,6 +211,12 @@ public class JScoreboard {
     public void removePlayer(Player player) {
         this.activePlayers.remove(player.getUniqueId());
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+
+        teams.forEach(team -> {
+            if (team.isOnTeam(player.getUniqueId())) {
+                team.removePlayer(player);
+            }
+        });
     }
 
     /**

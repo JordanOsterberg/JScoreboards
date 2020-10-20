@@ -6,7 +6,7 @@
 
     <groupId>dev.jcsoftware</groupId>
     <artifactId>JScoreboards</artifactId>
-    <version>0.0.1-ALPHA</version>
+    <version>0.0.3-ALPHA</version>
     <build>
         <plugins>
             <plugin>
