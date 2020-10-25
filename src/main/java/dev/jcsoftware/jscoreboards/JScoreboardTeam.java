@@ -55,6 +55,8 @@ public class JScoreboardTeam {
     }
 
     public Team toBukkitTeam(Scoreboard bukkitScoreboard) {
+        if (bukkitScoreboard == null) return null;
+        
         Team team;
 
         if (bukkitScoreboard.getTeam(name) != null) {
