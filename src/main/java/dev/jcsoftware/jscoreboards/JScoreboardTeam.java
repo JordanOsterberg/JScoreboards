@@ -75,14 +75,10 @@ public class JScoreboardTeam {
 
         if (team == null) return;
 
-        for (String entry : team.getEntries()) {
-            team.removeEntry(entry);
-        }
-
         for (UUID playerUUID : entities) {
             Player player = Bukkit.getPlayer(playerUUID);
 
-            if (player != null) {
+            if (player != null && !team.hasEntry(player.getName())) {
                 team.addEntry(player.getName());
             }
         }
