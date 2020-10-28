@@ -59,6 +59,7 @@ public class JScoreboard {
     protected void updateScoreboard(Scoreboard scoreboard, List<String> lines) throws JScoreboardException {
         if (previousLinesMap.containsKey(scoreboard)) {
             if (previousLinesMap.get(scoreboard).equals(lines)) { // Are the lines the same? Don't take up server resources to change absolutely nothing
+                updateTeams(scoreboard); // Update the teams anyway
                 return;
             }
 
@@ -148,19 +149,11 @@ public class JScoreboard {
             score += 1;
         }
 
-        for (JScoreboardTeam team : this.teams) {
-            if (this instanceof JPerPlayerScoreboard) {
-                JPerPlayerScoreboard perPlayerScoreboard = (JPerPlayerScoreboard) this;
-                perPlayerScoreboard.activePlayers.forEach(playerUUID -> {
-                    Player player = Bukkit.getPlayer(playerUUID);
-                    if (player == null) return;
+        updateTeams(scoreboard);
+    }
 
-                    team.refresh(perPlayerScoreboard.toBukkitScoreboard(player));
-                });
-            } else {
-                team.refresh(toBukkitScoreboard());
-            }
-        }
+    private void updateTeams(Scoreboard scoreboard) {
+        this.teams.forEach(team -> team.refresh(scoreboard));
     }
 
     private List<String> colorOptions(List<String> lines) {
