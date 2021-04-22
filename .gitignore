@@ -1,2 +1,3 @@
-src/main/java/dev/jcsoftware/jscoreboards/exampleplugin
 /target
+.idea
+/.idea/

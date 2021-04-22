@@ -1,4 +1,0 @@
-name: ExampleJScoreboardPlugin
-version: 1.0.0
-api-version: 1.16
-main: dev.jcsoftware.jscoreboards.exampleplugin.PerPlayerExamplePlugin

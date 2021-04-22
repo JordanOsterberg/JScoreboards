@@ -1,6 +1,7 @@
 package dev.jcsoftware.jscoreboards;
 
 import dev.jcsoftware.jscoreboards.exception.*;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -8,313 +9,303 @@ import org.bukkit.scoreboard.*;
 
 import java.util.*;
 
-public class JScoreboard {
+public abstract class JScoreboard {
+  private JScoreboardOptions options;
 
-    private JScoreboardOptions options;
+  private final List<JScoreboardTeam> teams = new ArrayList<>();
+  protected List<UUID> activePlayers = new ArrayList<>();
 
-    private final List<JScoreboardTeam> teams = new ArrayList<>();
-    private List<String> lines = new ArrayList<>();
-    protected List<UUID> activePlayers = new ArrayList<>();
+  private final Map<Scoreboard, List<String>> previousLinesMap = new HashMap<>();
 
-    private Scoreboard scoreboard;
+  // MARK: Public API
 
-    public JScoreboard(JScoreboardOptions options) {
-        this.options = options;
+  /**
+   * Add a player to the scoreboard
+   * @param player The player to add
+   */
+  public void addPlayer(Player player) {
+    this.activePlayers.add(player.getUniqueId());
+  }
+
+  /**
+   * Remove the player from the JScoreboard, and remove any teams they may be a member of.
+   * This will reset their scoreboard to the main scoreboard.
+   * @param player The player to remove
+   */
+  public void removePlayer(Player player) {
+    this.activePlayers.remove(player.getUniqueId());
+    Validate.notNull(Bukkit.getScoreboardManager());
+    player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+
+    teams.forEach(team -> {
+      if (team.isOnTeam(player.getUniqueId())) {
+        team.removePlayer(player);
+      }
+    });
+  }
+
+  /**
+   * Find a team using a name
+   * @param name The name to search for. Color codes will be stripped from both the team name and this variable.
+   * @return The JScoreboardPlayerTeam found, if any. Will return null if no team exists
+   */
+  public Optional<JScoreboardTeam> findTeam(String name) {
+    return teams.stream()
+        .filter(team -> ChatColor.stripColor(team.getName()).equalsIgnoreCase(ChatColor.stripColor(name)))
+        .findAny();
+  }
+
+  /**
+   * Create a team on the scoreboard. ChatColor.WHITE is used as the color for the team.
+   * @param name The name for the new team. This name cannot be longer than 16 characters
+   * @return The created JScoreboardPlayerTeam
+   * @throws DuplicateTeamCreatedException If a team with that name already exists
+   * @throws ScoreboardTeamNameTooLongException If the team's name is longer than 16 characters
+   */
+  public JScoreboardTeam createTeam(String name, String displayName) throws DuplicateTeamCreatedException, ScoreboardTeamNameTooLongException {
+    return createTeam(name, displayName, ChatColor.WHITE);
+  }
+
+  /**
+   * Create a team on the scoreboard.
+   * @param name The name for the new team. This name cannot be longer than 16 characters
+   * @return The created JScoreboardPlayerTeam
+   * @throws DuplicateTeamCreatedException If a team with that name already exists
+   * @throws ScoreboardTeamNameTooLongException If the team's name is longer than 16 characters
+   */
+  public JScoreboardTeam createTeam(String name, String displayName, ChatColor teamColor) throws DuplicateTeamCreatedException, ScoreboardTeamNameTooLongException {
+    for (JScoreboardTeam team : this.teams) {
+      if (ChatColor.stripColor(team.getName()).equalsIgnoreCase(ChatColor.stripColor(name))) {
+        throw new DuplicateTeamCreatedException(name);
+      }
     }
 
-    public JScoreboard() {
-        this.options = JScoreboardOptions.defaultOptions;
+    if (name.length() > 16) {
+      throw new ScoreboardTeamNameTooLongException(name);
     }
 
-    private void createBukkitScoreboardIfNull() {
-        if (this instanceof JPerPlayerScoreboard) return;
+    JScoreboardTeam team = new JScoreboardTeam(name, displayName, teamColor,this);
+    team.refresh();
+    this.teams.add(team);
+    return team;
+  }
 
-        if (this.scoreboard == null) {
-            ScoreboardManager scoreboardManager = Bukkit.getServer().getScoreboardManager();
-            if (scoreboardManager == null) return;
+  /**
+   * Remove a team from the scoreboard
+   * @param team The team to remove from the scoreboard
+   */
+  public void removeTeam(JScoreboardTeam team) {
+    if (team.getScoreboard() != this) return;
 
-            scoreboard = scoreboardManager.getNewScoreboard();
+    team.destroy();
+    this.teams.remove(team);
+  }
 
-            for (UUID playerUUID : activePlayers) {
-                Player player = Bukkit.getPlayer(playerUUID);
+  /**
+   * Destroy the scoreboard. This will reset all players to the server's main scoreboard, and clear all teams.
+   * You should call this method inside of your plugin's onDisable method.
+   */
+  public void destroy() {
+    for (UUID playerUUID : activePlayers) {
+      Player player = Bukkit.getPlayer(playerUUID);
 
-                if (player != null) {
-                    player.setScoreboard(scoreboard);
-                }
-            }
-        }
-    }
-
-    protected void updateScoreboard() throws JScoreboardException {
-        createBukkitScoreboardIfNull();
-        updateScoreboard(scoreboard, lines);
-    }
-
-    private final Map<Scoreboard, List<String>> previousLinesMap = new HashMap<>();
-
-    /**
-     * Update the scoreboard for all players it is shown to.
-     * @throws JScoreboardException If a String within the lines array is over 64 characters, this exception is thrown.
-     */
-    protected void updateScoreboard(Scoreboard scoreboard, List<String> lines) throws JScoreboardException {
-        if (previousLinesMap.containsKey(scoreboard)) {
-            if (previousLinesMap.get(scoreboard).equals(lines)) { // Are the lines the same? Don't take up server resources to change absolutely nothing
-                updateTeams(scoreboard); // Update the teams anyway
-                return;
-            }
-
-            // Size difference means unregister objective to reset and re-register teams correctly
-            if (previousLinesMap.get(scoreboard).size() != lines.size()) {
-                scoreboard.clearSlot(DisplaySlot.SIDEBAR);
-                scoreboard.getEntries().forEach(scoreboard::resetScores);
-                scoreboard.getTeams().forEach(team -> {
-                    if (team.getName().contains("line")) {
-                        team.unregister();
-                    }
-                });
-            }
-        }
-
-        previousLinesMap.put(scoreboard, lines);
-
-        Objective objective;
-
-        if (scoreboard.getObjective("dummy") == null) {
-            objective = scoreboard.registerNewObjective("dummy", "dummy", "dummy");
-        } else {
-            objective = scoreboard.getObjective("dummy");
-        }
-
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName(color(options.getScoreboardTitle()));
-
-        Objective healthObjective = scoreboard.getObjective("tabHealth");
-        if (options.getTabHealthStyle() != JScoreboardTabHealthStyle.NONE) {
-            if (healthObjective == null) {
-                healthObjective = scoreboard.registerNewObjective(
-                        "tabHealth",
-                        "health",
-                        "health",
-                        options.getTabHealthStyle() == JScoreboardTabHealthStyle.HEARTS ? RenderType.HEARTS : RenderType.INTEGER
-                );
-            }
-
-            healthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
-        } else {
-            if (healthObjective != null) {
-                healthObjective.unregister();
-            }
-        }
-
-        if (options.shouldShowHealthUnderName()) {
-            healthObjective = scoreboard.getObjective("nameHealth");
-            if (healthObjective == null) {
-                healthObjective = scoreboard.registerNewObjective(
-                        "nameHealth",
-                        "health",
-                        ChatColor.translateAlternateColorCodes('&', "&c❤")
-                );
-            }
-
-            healthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-        } else {
-            healthObjective = scoreboard.getObjective("nameHealth");
-            if (healthObjective != null) {
-                healthObjective.unregister();
-            }
-        }
-
-        List<String> colorCodeOptions = colorOptions(lines);
-
-        int score = 1;
-
-        for (String entry : lines) {
-            if (entry.length() > 64) {
-                throw new ScoreboardLineTooLongException();
-            }
-
-            Team team = scoreboard.getTeam("line" + score);
-
-            if (team != null) {
-                team.setPrefix(color(entry));
-                team.getEntries().forEach(team::removeEntry);
-                team.addEntry(colorCodeOptions.get(score));
-            } else {
-                team = scoreboard.registerNewTeam("line" + score);
-                team.addEntry(colorCodeOptions.get(score));
-                team.setPrefix(color(entry));
-                objective.getScore(colorCodeOptions.get(score)).setScore(score);
-            }
-
-            score += 1;
-        }
-
-        updateTeams(scoreboard);
-    }
-
-    private void updateTeams(Scoreboard scoreboard) {
-        this.teams.forEach(team -> team.refresh(scoreboard));
-    }
-
-    private List<String> colorOptions(List<String> lines) {
-        List<String> colorCodeOptions = new ArrayList<>();
-        for (ChatColor color : ChatColor.values()) {
-            if (color.isFormat()) {
-                continue;
-            }
-
-            for (ChatColor secondColor : ChatColor.values()) {
-                if (secondColor.isFormat()) {
-                    continue;
-                }
-
-                String option = color + " " + secondColor;
-
-                if (color != secondColor && !colorCodeOptions.contains(option)) {
-                    colorCodeOptions.add(option);
-
-                    if (colorCodeOptions.size() == lines.size()) break;
-                }
-            }
-        }
-
-        return colorCodeOptions;
-    }
-
-    public void setLines(List<String> lines) throws JScoreboardException {
-        Collections.reverse(lines);
-        this.lines = lines;
-        updateScoreboard();
-    }
-
-    public void setLines(String... lines) throws JScoreboardException {
-        List<String> linesList = new ArrayList<>(Arrays.asList(lines));
-        setLines(linesList);
-    }
-
-    /**
-     * Add a player to the scoreboard
-     * @param player The player to add
-     */
-    public void addPlayer(Player player) {
-        this.activePlayers.add(player.getUniqueId());
-
-        createBukkitScoreboardIfNull();
-        player.setScoreboard(scoreboard);
-    }
-
-    /**
-     * Remove the player from the JScoreboard. This will reset their scoreboard to the main scoreboard
-     * @param player The player to remove
-     */
-    public void removePlayer(Player player) {
-        this.activePlayers.remove(player.getUniqueId());
+      if (player != null) {
+        Validate.notNull(Bukkit.getScoreboardManager());
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+      }
+    }
 
-        teams.forEach(team -> {
-            if (team.isOnTeam(player.getUniqueId())) {
-                team.removePlayer(player);
-            }
+    for (JScoreboardTeam team : teams) {
+      team.destroy();
+    }
+
+    this.activePlayers.clear();
+    this.teams.clear();
+  }
+
+  /**
+   * Get the teams registered on the Scoreboard
+   * @return The teams registered on the scoreboard
+   */
+  public List<JScoreboardTeam> getTeams() {
+    return teams;
+  }
+
+  /**
+   * Get the options for the Scoreboard.
+   * If changed directly, updateScoreboard() must be called manually.
+   * @return The options for the scoreboard
+   */
+  public JScoreboardOptions getOptions() {
+    return options;
+  }
+
+  // MARK: Private API
+
+  /**
+   * Update a scoreboard with a list of lines
+   * @throws ScoreboardLineTooLongException If a String within the lines array is over 64 characters, this exception is thrown.
+   */
+  protected void updateScoreboard(Scoreboard scoreboard, List<String> lines) throws ScoreboardLineTooLongException {
+    if (previousLinesMap.containsKey(scoreboard)) {
+      if (previousLinesMap.get(scoreboard).equals(lines)) { // Are the lines the same? Don't take up server resources to change absolutely nothing
+        updateTeams(scoreboard); // Update the teams anyway
+        return;
+      }
+
+      // Size difference means unregister objective to reset and re-register teams correctly
+      if (previousLinesMap.get(scoreboard).size() != lines.size()) {
+        scoreboard.clearSlot(DisplaySlot.SIDEBAR);
+        scoreboard.getEntries().forEach(scoreboard::resetScores);
+        scoreboard.getTeams().forEach(team -> {
+          if (team.getName().contains("line")) {
+            team.unregister();
+          }
         });
+      }
     }
 
-    /**
-     * Find a team using a name
-     * @param name The name to search for. Color codes will be stripped from both the team name and this variable.
-     * @return The JScoreboardPlayerTeam found, if any. Will return null if no team exists
-     */
-    public Optional<JScoreboardTeam> findTeam(String name) {
-        return teams.stream().filter(team -> ChatColor.stripColor(team.getName()).equalsIgnoreCase(ChatColor.stripColor(name)))
-                .findAny();
+    previousLinesMap.put(scoreboard, lines);
+
+    Objective objective;
+
+    if (scoreboard.getObjective("dummy") == null) {
+      objective = scoreboard.registerNewObjective("dummy", "dummy", "dummy");
+    } else {
+      objective = scoreboard.getObjective("dummy");
     }
 
-    /**
-     * Create a team on the scoreboard. ChatColor.WHITE is used as the color for the team.
-     * @param name The name for the new team. This name cannot be longer than 16 characters
-     * @return The created JScoreboardPlayerTeam
-     * @throws DuplicateTeamCreatedException If a team with that name already exists
-     */
-    public JScoreboardTeam createTeam(String name, String displayName) throws JScoreboardException {
-        return createTeam(name, displayName, ChatColor.WHITE);
+    Validate.notNull(objective);
+
+    objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+    objective.setDisplayName(color(getTitle(scoreboard)));
+
+    Objective healthObjective = scoreboard.getObjective("tabHealth");
+    if (options.getTabHealthStyle() != JScoreboardTabHealthStyle.NONE) {
+      if (healthObjective == null) {
+        healthObjective = scoreboard.registerNewObjective(
+            "tabHealth",
+            "health",
+            "health",
+            options.getTabHealthStyle() == JScoreboardTabHealthStyle.HEARTS ? RenderType.HEARTS : RenderType.INTEGER
+        );
+      }
+
+      healthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+    } else {
+      if (healthObjective != null) {
+        healthObjective.unregister();
+      }
     }
 
-    /**
-     * Create a team on the scoreboard.
-     * @param name The name for the new team. This name cannot be longer than 16 characters
-     * @return The created JScoreboardPlayerTeam
-     * @throws DuplicateTeamCreatedException If a team with that name already exists
-     */
-    public JScoreboardTeam createTeam(String name, String displayName, ChatColor teamColor) throws JScoreboardException {
-        for (JScoreboardTeam team : this.teams) {
-            if (ChatColor.stripColor(team.getName()).equalsIgnoreCase(ChatColor.stripColor(name))) {
-                throw new DuplicateTeamCreatedException(name);
-            }
+    if (options.shouldShowHealthUnderName()) {
+      healthObjective = scoreboard.getObjective("nameHealth");
+      if (healthObjective == null) {
+        healthObjective = scoreboard.registerNewObjective(
+            "nameHealth",
+            "health",
+            ChatColor.translateAlternateColorCodes('&', "&c❤")
+        );
+      }
+
+      healthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+    } else {
+      healthObjective = scoreboard.getObjective("nameHealth");
+      if (healthObjective != null) {
+        healthObjective.unregister();
+      }
+    }
+
+    List<String> colorCodeOptions = colorOptions(lines.size());
+
+    int score = 1;
+
+    for (String entry : lines) {
+      if (entry.length() > 64) {
+        throw new ScoreboardLineTooLongException(entry);
+      }
+
+      Team team = scoreboard.getTeam("line" + score);
+
+      if (team != null) {
+        team.setPrefix(color(entry));
+        team.getEntries().forEach(team::removeEntry);
+        team.addEntry(colorCodeOptions.get(score));
+      } else {
+        team = scoreboard.registerNewTeam("line" + score);
+        team.addEntry(colorCodeOptions.get(score));
+        team.setPrefix(color(entry));
+        objective.getScore(colorCodeOptions.get(score)).setScore(score);
+      }
+
+      score += 1;
+    }
+
+    updateTeams(scoreboard);
+  }
+
+  /**
+   * Update the teams on the scoreboard. Loops over all teams and calls refresh(Scoreboard)
+   * @param scoreboard The Bukkit scoreboard to use
+   */
+  private void updateTeams(Scoreboard scoreboard) {
+    this.teams.forEach(team -> team.refresh(scoreboard));
+  }
+
+  /**
+   * Generate a list of unique color code combinations to use as scoreboard entries.
+   * This is done to ensure that...
+   * 1. Duplicate lines can be created
+   * 2. The content of a scoreboard line is stored in the team prefix + suffix, rather than the entry itself
+   * @param amountOfLines The amount of lines, and by proxy the amount of color combinations, to be generated
+   * @return The list of unique color combinations
+   */
+  private List<String> colorOptions(int amountOfLines) {
+    List<String> colorCodeOptions = new ArrayList<>();
+    for (ChatColor color : ChatColor.values()) {
+      if (color.isFormat()) {
+        continue;
+      }
+
+      for (ChatColor secondColor : ChatColor.values()) {
+        if (secondColor.isFormat()) {
+          continue;
         }
 
-        if (name.length() > 16) {
-            throw new ScoreboardTeamNameTooLongException(name);
+        String option = color + " " + secondColor;
+
+        if (color != secondColor && !colorCodeOptions.contains(option)) {
+          colorCodeOptions.add(option);
+
+          if (colorCodeOptions.size() == amountOfLines) break;
         }
-
-        createBukkitScoreboardIfNull();
-
-        JScoreboardTeam team = new JScoreboardTeam(name, displayName, teamColor,this);
-        team.refresh();
-        this.teams.add(team);
-        return team;
+      }
     }
 
-    /**
-     * Remove a team from the scoreboard
-     * @param team The team to remove from the scoreboard
-     */
-    public void removeTeam(JScoreboardTeam team) {
-        if (team.getScoreboard() != this) return;
+    return colorCodeOptions;
+  }
 
-        team.destroy();
-        this.teams.remove(team);
-    }
+  /**
+   * Set the options of the scoreboard
+   * @param options The options
+   */
+  protected void setOptions(JScoreboardOptions options) {
+    this.options = options;
+  }
 
-    /**
-     * Destroy the scoreboard. This will reset all players to the server's main scoreboard
-     * You should call this method inside of your JavaPlugin's onDisable method.
-     */
-    public void destroy() {
-        for (UUID playerUUID : activePlayers) {
-            Player player = Bukkit.getPlayer(playerUUID);
+  /**
+   * Translate a String into a color formatted String. Uses & as the special color char.
+   * @param string The string to translate
+   * @return The formatted String
+   */
+  protected String color(String string) {
+    return ChatColor.translateAlternateColorCodes('&', string);
+  }
 
-            if (player != null) {
-                player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-            }
-        }
-
-        for (JScoreboardTeam team : teams) {
-            team.destroy();
-        }
-
-        this.activePlayers.clear();
-        this.lines.clear();
-        this.teams.clear();
-        this.scoreboard = null;
-    }
-
-    public Scoreboard toBukkitScoreboard() {
-        return scoreboard;
-    }
-
-    public JScoreboardOptions getOptions() {
-        return options;
-    }
-
-    public void setOptions(JScoreboardOptions options) {
-        this.options = options;
-    }
-
-    private String color(String string) {
-        return ChatColor.translateAlternateColorCodes('&', string);
-    }
-
-    public List<JScoreboardTeam> getTeams() {
-        return teams;
-    }
-
+  /**
+   * Get the title for a particular Scoreboard
+   * @param scoreboard The Bukkit scoreboard that requires a title
+   * @return The title String
+   */
+  protected abstract String getTitle(Scoreboard scoreboard);
 }

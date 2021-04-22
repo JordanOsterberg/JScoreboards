@@ -1,7 +1,6 @@
 package dev.jcsoftware.jscoreboards.exampleplugin;
 
 import dev.jcsoftware.jscoreboards.*;
-import dev.jcsoftware.jscoreboards.JPerPlayerScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,9 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PerPlayerExamplePlugin extends JavaPlugin {
-
-  private JPerPlayerScoreboard scoreboard;
+public class PerPlayerMethodBasedExamplePlugin extends JavaPlugin {
+  private JPerPlayerMethodBasedScoreboard scoreboard;
   private JScoreboardTeam taggedTeam;
 
   private int explosionTimer = 30;
@@ -20,23 +18,7 @@ public class PerPlayerExamplePlugin extends JavaPlugin {
   public void onEnable() {
     super.onEnable();
 
-    this.scoreboard = new JPerPlayerScoreboard(
-        player -> "&4&lTNT&f&lTag",
-        player -> {
-          List<String> lines = new ArrayList<>();
-          lines.add("&aX: &7" + player.getLocation().getBlockX());
-          lines.add("&aY: &7" + player.getLocation().getBlockY());
-          lines.add("&aZ: &7" + player.getLocation().getBlockZ());
-          lines.add("");
-          lines.add("&7Explosion in &c" + explosionTimer + "...");
-
-          if (explosionTimer % 2 == 0) {
-            lines.add("");
-            lines.add("No Remainder!");
-          }
-
-          return lines;
-      },
+    this.scoreboard = new JPerPlayerMethodBasedScoreboard(
         new JScoreboardOptions(JScoreboardTabHealthStyle.NONE, true)
     );
 
@@ -56,9 +38,21 @@ public class PerPlayerExamplePlugin extends JavaPlugin {
         } else {
           this.taggedTeam.removePlayer(player);
         }
-      }
 
-      this.scoreboard.updateScoreboard();
+        List<String> lines = new ArrayList<>();
+        lines.add("&aX: &7" + player.getLocation().getBlockX());
+        lines.add("&aY: &7" + player.getLocation().getBlockY());
+        lines.add("&aZ: &7" + player.getLocation().getBlockZ());
+        lines.add("");
+        lines.add("&7Explosion in &c" + explosionTimer + "...");
+
+        if (explosionTimer % 2 == 0) {
+          lines.add("");
+          lines.add("No Remainder!");
+        }
+        scoreboard.setLines(player, lines);
+        scoreboard.setTitle(player, "&4&lTNT&f&lTag");
+      }
     }, 0, 20);
   }
 
