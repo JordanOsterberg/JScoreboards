@@ -57,7 +57,6 @@ public class JPerPlayerScoreboard extends JScoreboard {
       if (lines == null) {
         lines = new ArrayList<>();
       }
-      Collections.reverse(lines);
       updateScoreboard(player.getScoreboard(), lines);
     }
   }

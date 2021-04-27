@@ -144,6 +144,7 @@ public abstract class JScoreboard {
 
   /**
    * Update a scoreboard with a list of lines
+   * These lines must be in reverse order!
    * @throws ScoreboardLineTooLongException If a String within the lines array is over 64 characters, this exception is thrown.
    */
   protected void updateScoreboard(Scoreboard scoreboard, List<String> lines) throws ScoreboardLineTooLongException {
@@ -157,7 +158,16 @@ public abstract class JScoreboard {
 
     Validate.notNull(objective);
 
-    objective.setDisplayName(color(getTitle(scoreboard)));
+    String title = getTitle(scoreboard);
+    if (title == null) {
+      title = "";
+    }
+
+    objective.setDisplayName(color(title));
+
+    if (lines == null) {
+      lines = new ArrayList<>();
+    }
 
     if (previousLinesMap.containsKey(scoreboard)) {
       if (previousLinesMap.get(scoreboard).equals(lines)) { // Are the lines the same? Don't take up server resources to change absolutely nothing
