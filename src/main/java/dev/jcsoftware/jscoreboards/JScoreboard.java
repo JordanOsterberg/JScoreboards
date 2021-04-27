@@ -147,6 +147,18 @@ public abstract class JScoreboard {
    * @throws ScoreboardLineTooLongException If a String within the lines array is over 64 characters, this exception is thrown.
    */
   protected void updateScoreboard(Scoreboard scoreboard, List<String> lines) throws ScoreboardLineTooLongException {
+    Objective objective;
+
+    if (scoreboard.getObjective("dummy") == null) {
+      objective = scoreboard.registerNewObjective("dummy", "dummy", "dummy");
+    } else {
+      objective = scoreboard.getObjective("dummy");
+    }
+
+    Validate.notNull(objective);
+
+    objective.setDisplayName(color(getTitle(scoreboard)));
+
     if (previousLinesMap.containsKey(scoreboard)) {
       if (previousLinesMap.get(scoreboard).equals(lines)) { // Are the lines the same? Don't take up server resources to change absolutely nothing
         updateTeams(scoreboard); // Update the teams anyway
@@ -167,18 +179,10 @@ public abstract class JScoreboard {
 
     previousLinesMap.put(scoreboard, lines);
 
-    Objective objective;
-
-    if (scoreboard.getObjective("dummy") == null) {
-      objective = scoreboard.registerNewObjective("dummy", "dummy", "dummy");
-    } else {
-      objective = scoreboard.getObjective("dummy");
-    }
-
-    Validate.notNull(objective);
+    List<String> reversedLines = new ArrayList<>(lines);
+    Collections.reverse(reversedLines);
 
     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-    objective.setDisplayName(color(getTitle(scoreboard)));
 
     Objective healthObjective = scoreboard.getObjective("tabHealth");
     if (options.getTabHealthStyle() != JScoreboardTabHealthStyle.NONE) {
@@ -216,11 +220,11 @@ public abstract class JScoreboard {
       }
     }
 
-    List<String> colorCodeOptions = colorOptions(lines.size());
+    List<String> colorCodeOptions = colorOptions(reversedLines.size());
 
     int score = 1;
 
-    for (String entry : lines) {
+    for (String entry : reversedLines) {
       if (entry.length() > 64) {
         throw new ScoreboardLineTooLongException(entry);
       }

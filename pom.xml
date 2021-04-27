@@ -6,7 +6,7 @@
 
     <groupId>dev.jcsoftware</groupId>
     <artifactId>JScoreboards</artifactId>
-    <version>1.0.0-RELEASE</version>
+    <version>1.0.1-RELEASE</version>
     <build>
         <plugins>
             <plugin>
