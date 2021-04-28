@@ -3,7 +3,7 @@ Welcome to the JScoreboards Spigot library page.
 
 If you find bugs- report them as a GitHub issue. Thanks!
 
-If you'd like a video tutorial on how this API works, I have this YouTube video you can watch: [link coming soon]
+If you'd like a video tutorial on how this API works, I have a [YouTube video](https://youtube.com/watch?v=SoPWdEMNFAM) you can watch.
 Otherwise, you can take a look at the [wiki](https://github.com/JordanOsterberg/JScoreboards/wiki).
  
 ## Maven Repository
