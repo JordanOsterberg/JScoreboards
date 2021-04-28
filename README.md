@@ -1,9 +1,10 @@
 # JScoreboards
 Welcome to the JScoreboards Spigot library page.
 
-JScoreboards is currently in **alpha** development- there will be bugs and I recommend you don't use this in production until some of those bugs get patched.
-
 If you find bugs- report them as a GitHub issue. Thanks!
+
+If you'd like a video tutorial on how this API works, I have this YouTube video you can watch: [link coming soon]
+Otherwise, you can take a look at the [wiki](https://github.com/JordanOsterberg/JScoreboards/wiki).
  
 ## Maven Repository
 
