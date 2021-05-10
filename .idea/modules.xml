@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/1_16/1_16.iml" filepath="$PROJECT_DIR$/1_16/1_16.iml" />
+      <module fileurl="file://$PROJECT_DIR$/1_8/1_8.iml" filepath="$PROJECT_DIR$/1_8/1_8.iml" />
       <module fileurl="file://$PROJECT_DIR$/JScoreboards.iml" filepath="$PROJECT_DIR$/JScoreboards.iml" />
+      <module fileurl="file://$PROJECT_DIR$/QAPlugin/QAPlugin.iml" filepath="$PROJECT_DIR$/QAPlugin/QAPlugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/abstraction/abstraction.iml" filepath="$PROJECT_DIR$/abstraction/abstraction.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
     </modules>
   </component>
 </project>

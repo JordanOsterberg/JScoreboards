@@ -6,11 +6,19 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="JScoreboards" />
+        <module name="1_8" />
+        <module name="QAPlugin" />
+        <module name="1_16" />
+        <module name="abstraction" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="JScoreboards" target="8" />
+      <module name="1_16" target="1.8" />
+      <module name="1_8" target="1.8" />
+      <module name="abstraction" target="1.8" />
+      <module name="api" target="1.5" />
+      <module name="JScoreboards" target="1.5" />
+      <module name="QAPlugin" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,6 +1,7 @@
 package dev.jcsoftware.jscoreboards;
 
-import dev.jcsoftware.jscoreboards.exception.*;
+import dev.jcsoftware.jscoreboards.abstraction.JScoreboardWrapper;
+import dev.jcsoftware.jscoreboards.versioning.VersionMatcher;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,11 +12,16 @@ import java.util.*;
 
 public abstract class JScoreboard {
   private JScoreboardOptions options;
+  private final JScoreboardWrapper wrapper;
 
   private final List<JScoreboardTeam> teams = new ArrayList<>();
   protected List<UUID> activePlayers = new ArrayList<>();
 
   private final Map<Scoreboard, List<String>> previousLinesMap = new HashMap<>();
+
+  public JScoreboard() {
+    wrapper = new VersionMatcher().match();
+  }
 
   // MARK: Public API
 
@@ -148,13 +154,7 @@ public abstract class JScoreboard {
    * @throws ScoreboardLineTooLongException If a String within the lines array is over 64 characters, this exception is thrown.
    */
   protected void updateScoreboard(Scoreboard scoreboard, List<String> lines) throws ScoreboardLineTooLongException {
-    Objective objective;
-
-    if (scoreboard.getObjective("dummy") == null) {
-      objective = scoreboard.registerNewObjective("dummy", "dummy", "dummy");
-    } else {
-      objective = scoreboard.getObjective("dummy");
-    }
+    Objective objective = wrapper.getDummyObjective(scoreboard);
 
     Validate.notNull(objective);
 
@@ -194,37 +194,23 @@ public abstract class JScoreboard {
 
     objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-    Objective healthObjective = scoreboard.getObjective("tabHealth");
-    if (options.getTabHealthStyle() != JScoreboardTabHealthStyle.NONE) {
-      if (healthObjective == null) {
-        healthObjective = scoreboard.registerNewObjective(
-            "tabHealth",
-            "health",
-            "health",
-            options.getTabHealthStyle() == JScoreboardTabHealthStyle.HEARTS ? RenderType.HEARTS : RenderType.INTEGER
-        );
-      }
+    Objective healthObjective;
 
+    if (options.getTabHealthStyle() != JScoreboardTabHealthStyle.NONE) {
+      healthObjective = wrapper.getTabHealthObjective(options.getTabHealthStyle().toWrapped(), scoreboard);
       healthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
     } else {
+      healthObjective = wrapper.getTabHealthObjective(options.getTabHealthStyle().toWrapped(), scoreboard);
       if (healthObjective != null) {
         healthObjective.unregister();
       }
     }
 
     if (options.shouldShowHealthUnderName()) {
-      healthObjective = scoreboard.getObjective("nameHealth");
-      if (healthObjective == null) {
-        healthObjective = scoreboard.registerNewObjective(
-            "nameHealth",
-            "health",
-            ChatColor.translateAlternateColorCodes('&', "&c❤")
-        );
-      }
-
+      healthObjective = wrapper.getNameHealthObjective(scoreboard);
       healthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
     } else {
-      healthObjective = scoreboard.getObjective("nameHealth");
+      healthObjective = wrapper.getNameHealthObjective(scoreboard);
       if (healthObjective != null) {
         healthObjective.unregister();
       }
@@ -297,6 +283,10 @@ public abstract class JScoreboard {
     }
 
     return colorCodeOptions;
+  }
+
+  protected JScoreboardWrapper getWrapper() {
+    return wrapper;
   }
 
   /**

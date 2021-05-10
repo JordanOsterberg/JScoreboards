@@ -74,7 +74,7 @@ public class JScoreboardTeam {
       }
     }
 
-    team.setColor(teamColor);
+    getScoreboard().getWrapper().setColor(team, teamColor);
     team.setPrefix(ChatColor.translateAlternateColorCodes('&', getDisplayName()));
   }
 
