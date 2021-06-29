@@ -2,6 +2,7 @@ package dev.jcsoftware.jscoreboards.versioning;
 
 import dev.jcsoftware.jscoreboards.abstraction.JScoreboardWrapper;
 import dev.jcsoftware.jscoreboards.version.Wrapper1_16;
+import dev.jcsoftware.jscoreboards.version.Wrapper1_8;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +16,8 @@ public class VersionMatcher {
           .substring(1);
 
   private final List<Class<? extends JScoreboardWrapper>> versions = Arrays.asList(
-    Wrapper1_16.class
+      Wrapper1_8.class,
+      Wrapper1_16.class
   );
 
   public JScoreboardWrapper match() {
@@ -23,7 +25,11 @@ public class VersionMatcher {
       return versions.stream()
           .filter(version -> serverVersion.contains(version.getSimpleName().substring(7)))
           .findFirst()
-          .orElse(Wrapper1_16.class)
+          .orElseGet(() -> {
+            Bukkit.getLogger().warning("Your version of Spigot (" + serverVersion + ") is not officially supported or tested by JScoreboards.");
+            Bukkit.getLogger().warning("Proceed with caution, and report bugs at https://github.com/JordanOsterberg/JScoreboards. Thanks!");
+            return Wrapper1_16.class;
+          })
           .getDeclaredConstructor()
           .newInstance();
     } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException ex) {

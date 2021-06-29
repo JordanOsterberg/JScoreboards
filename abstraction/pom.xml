@@ -7,10 +7,10 @@
     <parent>
         <groupId>dev.jcsoftware</groupId>
         <artifactId>JScoreboards-parent</artifactId>
-        <version>1.0.1-RELEASE</version>
+        <version>2.0.0-RELEASE</version>
     </parent>
 
-    <artifactId>JScoreboards-abstraction</artifactId>
+    <artifactId>jscoreboards-abstraction</artifactId>
 
     <dependencies>
         <dependency>

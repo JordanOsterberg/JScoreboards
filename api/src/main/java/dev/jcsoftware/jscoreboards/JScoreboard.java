@@ -1,6 +1,9 @@
 package dev.jcsoftware.jscoreboards;
 
 import dev.jcsoftware.jscoreboards.abstraction.JScoreboardWrapper;
+import dev.jcsoftware.jscoreboards.exception.DuplicateTeamCreatedException;
+import dev.jcsoftware.jscoreboards.exception.ScoreboardLineTooLongException;
+import dev.jcsoftware.jscoreboards.exception.ScoreboardTeamNameTooLongException;
 import dev.jcsoftware.jscoreboards.versioning.VersionMatcher;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;

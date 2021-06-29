@@ -4,13 +4,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>dev.jcsoftware</groupId>
+        <artifactId>JScoreboards-parent</artifactId>
+        <version>2.0.0-RELEASE</version>
+    </parent>
+
+    <artifactId>JScoreboards-1_8</artifactId>
+
     <dependencies>
         <dependency>
             <groupId>dev.jcsoftware</groupId>
-            <artifactId>JScoreboards-abstraction</artifactId>
+            <artifactId>jscoreboards-abstraction</artifactId>
             <version>${project.parent.version}</version>
+            <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -18,12 +26,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
-    <parent>
-        <groupId>dev.jcsoftware</groupId>
-        <artifactId>JScoreboards-parent</artifactId>
-        <version>1.0.1-RELEASE</version>
-    </parent>
-
-    <artifactId>JScoreboards-1_8</artifactId>
 </project>

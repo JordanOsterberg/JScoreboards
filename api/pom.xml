@@ -7,13 +7,26 @@
     <parent>
         <groupId>dev.jcsoftware</groupId>
         <artifactId>JScoreboards-parent</artifactId>
-        <version>1.0.1-RELEASE</version>
+        <version>2.0.0-RELEASE</version>
     </parent>
 
     <artifactId>JScoreboards</artifactId>
-    <packaging>pom</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.jcsoftware</groupId>
+            <artifactId>jscoreboards-abstraction</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>dev.jcsoftware</groupId>
             <artifactId>JScoreboards-1_16</artifactId>
@@ -26,19 +39,6 @@
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>dev.jcsoftware</groupId>
-            <artifactId>JScoreboards-abstraction</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -46,6 +46,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
             </plugin>
         </plugins>
     </build>
