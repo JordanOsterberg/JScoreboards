@@ -6,6 +6,7 @@ import dev.jcsoftware.jscoreboards.exception.DuplicateTeamCreatedException;
 import dev.jcsoftware.jscoreboards.exception.ScoreboardLineTooLongException;
 import dev.jcsoftware.jscoreboards.exception.ScoreboardTeamNameTooLongException;
 import dev.jcsoftware.jscoreboards.versioning.SpigotAPIVersion;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,7 +41,7 @@ public abstract class JScoreboard {
     if (SpigotAPIVersion.getCurrent().lessThan(SpigotAPIVersion.v1_13)) {
       maxLineLength = 32;
     } else {
-      maxLineLength = 64;
+      maxLineLength = 128;
     }
   }
 
@@ -245,23 +246,28 @@ public abstract class JScoreboard {
 
     for (String entry : reversedLines) {
       if (entry.length() > maxLineLength) {
-        throw new ScoreboardLineTooLongException(entry);
+        throw new ScoreboardLineTooLongException(entry, maxLineLength);
       }
+
+      entry = color(entry);
 
       Team team = scoreboard.getTeam("line" + score);
 
       String prefix;
       String suffix = "";
 
-      if (SpigotAPIVersion.getCurrent().lessThan(SpigotAPIVersion.v1_13)) {
-        if (entry.length() <= 16) {
-          prefix = entry;
-        } else {
-          prefix = entry.substring(0, 16);
-          suffix = entry.substring(16);
-        }
-      } else {
+      int cutoff = SpigotAPIVersion.getCurrent().lessThan(SpigotAPIVersion.v1_13) ? 16 : 64;
+      if (entry.length() <= cutoff) {
         prefix = entry;
+      } else {
+        prefix = entry.substring(0, cutoff);
+
+        if (prefix.endsWith(String.valueOf(ChatColor.COLOR_CHAR))) {
+          prefix = prefix.substring(0, prefix.length() - 1);
+          suffix = ChatColor.COLOR_CHAR + suffix;
+        }
+
+        suffix = StringUtils.left(ChatColor.getLastColors(prefix) + suffix + entry.substring(cutoff), cutoff);
       }
 
       if (team != null) {
@@ -273,8 +279,8 @@ public abstract class JScoreboard {
         objective.getScore(colorCodeOptions.get(score)).setScore(score);
       }
 
-      team.setPrefix(color(prefix));
-      team.setSuffix(color(suffix));
+      team.setPrefix(prefix);
+      team.setSuffix(suffix);
 
       score += 1;
     }
@@ -310,7 +316,7 @@ public abstract class JScoreboard {
           continue;
         }
 
-        String option = color + " " + secondColor;
+        String option = color + "" + secondColor;
 
         if (color != secondColor && !colorCodeOptions.contains(option)) {
           colorCodeOptions.add(option);
