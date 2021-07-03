@@ -15,13 +15,13 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="1_13" target="14" />
+      <module name="1_13" target="16" />
       <module name="1_17" target="14" />
-      <module name="JScoreboards" target="14" />
-      <module name="JScoreboards-1_14-1_17" target="14" />
+      <module name="JScoreboards" target="16" />
+      <module name="JScoreboards-1_14-1_17" target="16" />
       <module name="JScoreboards-1_8" target="14" />
-      <module name="JScoreboards-1_8-1_12" target="14" />
-      <module name="jscoreboards-abstraction" target="14" />
+      <module name="JScoreboards-1_8-1_12" target="16" />
+      <module name="jscoreboards-abstraction" target="16" />
       <module name="JScoreboards-parent" target="1.5" />
       <module name="QAPlugin" target="16" />
       <module name="team-support-1_12" target="14" />

@@ -6,7 +6,7 @@
 
     <groupId>dev.jcsoftware</groupId>
     <artifactId>JScoreboards-parent</artifactId>
-    <version>2.0.0-RELEASE</version>
+    <version>2.0.1-RELEASE</version>
     <packaging>pom</packaging>
 
     <properties>
