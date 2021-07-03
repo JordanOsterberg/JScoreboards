@@ -49,7 +49,7 @@ public class JPerPlayerScoreboard extends JScoreboard {
   public void updateScoreboard() throws ScoreboardLineTooLongException {
     if (generateLinesFunction == null) return; // Line generator is not ready yet
 
-    for (UUID playerUUID : activePlayers) {
+    for (UUID playerUUID : getActivePlayers()) {
       Player player = Bukkit.getPlayer(playerUUID);
       if (player == null) continue;
 
@@ -67,7 +67,7 @@ public class JPerPlayerScoreboard extends JScoreboard {
    */
   @Override
   public void addPlayer(Player player) {
-    activePlayers.add(player.getUniqueId());
+    getActivePlayers().add(player.getUniqueId());
 
     Validate.notNull(Bukkit.getScoreboardManager());
 

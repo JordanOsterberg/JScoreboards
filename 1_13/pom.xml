@@ -22,13 +22,19 @@
         <version>2.0.0-RELEASE</version>
     </parent>
 
-    <artifactId>jscoreboards-abstraction</artifactId>
+    <artifactId>jscoreboards-1_13</artifactId>
 
     <dependencies>
         <dependency>
+            <groupId>dev.jcsoftware</groupId>
+            <artifactId>jscoreboards-abstraction</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <version>1.13-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

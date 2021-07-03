@@ -7,20 +7,24 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="jscoreboards-abstraction" />
-        <module name="JScoreboards-1_8" />
-        <module name="api" />
-        <module name="JScoreboards-1_16" />
+        <module name="team-support-1_12" />
         <module name="JScoreboards" />
+        <module name="JScoreboards-1_8-1_12" />
+        <module name="JScoreboards-1_14-1_17" />
+        <module name="1_13" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="api" target="8" />
-      <module name="JScoreboards" target="16" />
-      <module name="JScoreboards-1_16" target="16" />
-      <module name="JScoreboards-1_8" target="16" />
-      <module name="jscoreboards-abstraction" target="16" />
+      <module name="1_13" target="14" />
+      <module name="1_17" target="14" />
+      <module name="JScoreboards" target="14" />
+      <module name="JScoreboards-1_14-1_17" target="14" />
+      <module name="JScoreboards-1_8" target="14" />
+      <module name="JScoreboards-1_8-1_12" target="14" />
+      <module name="jscoreboards-abstraction" target="14" />
       <module name="JScoreboards-parent" target="1.5" />
       <module name="QAPlugin" target="16" />
+      <module name="team-support-1_12" target="14" />
     </bytecodeTargetLevel>
   </component>
 </project>

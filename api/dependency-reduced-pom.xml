@@ -13,6 +13,13 @@
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.4</version>
       </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>14</source>
+          <target>14</target>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>

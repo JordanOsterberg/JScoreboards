@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <build>
         <plugins>
             <plugin>
@@ -22,13 +23,19 @@
         <version>2.0.0-RELEASE</version>
     </parent>
 
-    <artifactId>jscoreboards-abstraction</artifactId>
+    <artifactId>team-support-1_12</artifactId>
 
     <dependencies>
         <dependency>
+            <groupId>dev.jcsoftware</groupId>
+            <artifactId>jscoreboards-abstraction</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <version>1.12-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -66,16 +66,40 @@ public class JScoreboardTeam {
 
     if (team == null) return;
 
-    for (UUID playerUUID : entities) {
-      Player player = Bukkit.getPlayer(playerUUID);
+    for (UUID entityUUID : entities) {
+      Player player = Bukkit.getPlayer(entityUUID);
 
       if (player != null && !team.hasEntry(player.getName())) {
         team.addEntry(player.getName());
+      } else if (player == null) {
+        if (!team.hasEntry(entityUUID.toString())) {
+          team.addEntry(entityUUID.toString());
+        }
       }
     }
 
-    getScoreboard().getWrapper().setColor(team, teamColor);
+    getScoreboard().getTeamWrapper().setColor(team, teamColor);
     team.setPrefix(ChatColor.translateAlternateColorCodes('&', getDisplayName()));
+  }
+
+  private void handleRemoval(String entry) {
+    if (scoreboard instanceof JGlobalScoreboard) {
+      Team team = toBukkitTeam(((JGlobalScoreboard) scoreboard).toBukkitScoreboard());
+      if (team == null) return;
+      team.removeEntry(entry);
+      return;
+    }
+
+    JPerPlayerScoreboard perPlayerScoreboard = (JPerPlayerScoreboard) scoreboard;
+    for (UUID scoreboardPlayer : perPlayerScoreboard.getActivePlayers()) {
+      Player player = Bukkit.getPlayer(scoreboardPlayer);
+      if (player == null) continue;
+      Scoreboard playerScoreboard = perPlayerScoreboard.toBukkitScoreboard(player);
+
+      Team team = toBukkitTeam(playerScoreboard);
+      if (team == null) continue;
+      team.removeEntry(entry);
+    }
   }
 
   public Team toBukkitTeam(Scoreboard bukkitScoreboard) {
@@ -109,11 +133,17 @@ public class JScoreboardTeam {
   }
 
   public void removePlayer(Player player) {
+    if (!isOnTeam(player.getUniqueId())) return;
+
     removeEntity(player.getUniqueId());
+    handleRemoval(player.getName());
   }
 
   public void removeEntity(Entity entity) {
+    if (!isOnTeam(entity.getUniqueId())) return;
+
     removeEntity(entity.getUniqueId());
+    handleRemoval(entity.getUniqueId().toString());
   }
 
   public void removeEntity(UUID uuid) {

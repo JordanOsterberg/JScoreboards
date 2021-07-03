@@ -16,8 +16,10 @@
     <modules>
         <module>api</module>
         <module>abstraction</module>
-        <module>1_16</module>
-        <module>1_8</module>
+        <module>1_14-1_17</module>
+        <module>1_13</module>
+        <module>1_8-1_12</module>
+        <module>team-support-1_12</module>
     </modules>
 
     <build>

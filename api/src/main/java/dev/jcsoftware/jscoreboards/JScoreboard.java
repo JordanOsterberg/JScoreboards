@@ -1,29 +1,39 @@
 package dev.jcsoftware.jscoreboards;
 
-import dev.jcsoftware.jscoreboards.abstraction.JScoreboardWrapper;
+import dev.jcsoftware.jscoreboards.abstraction.InternalObjectiveWrapper;
+import dev.jcsoftware.jscoreboards.abstraction.InternalTeamWrapper;
 import dev.jcsoftware.jscoreboards.exception.DuplicateTeamCreatedException;
 import dev.jcsoftware.jscoreboards.exception.ScoreboardLineTooLongException;
 import dev.jcsoftware.jscoreboards.exception.ScoreboardTeamNameTooLongException;
-import dev.jcsoftware.jscoreboards.versioning.VersionMatcher;
+import dev.jcsoftware.jscoreboards.versioning.SpigotAPIVersion;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public abstract class JScoreboard {
   private JScoreboardOptions options;
-  private final JScoreboardWrapper wrapper;
+
+  private InternalObjectiveWrapper objectiveWrapper;
+  private InternalTeamWrapper teamWrapper;
 
   private final List<JScoreboardTeam> teams = new ArrayList<>();
-  protected List<UUID> activePlayers = new ArrayList<>();
+  private final List<UUID> activePlayers = new ArrayList<>();
 
   private final Map<Scoreboard, List<String>> previousLinesMap = new HashMap<>();
 
   public JScoreboard() {
-    wrapper = new VersionMatcher().match();
+    try {
+      objectiveWrapper = SpigotAPIVersion.getCurrent().makeObjectiveWrapper();
+      teamWrapper = SpigotAPIVersion.getCurrent().makeInternalTeamWrapper();
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+      e.printStackTrace();
+      Bukkit.getLogger().severe("Failed to initialize JScoreboards- please send the full stacktrace above to https://github.com/JordanOsterberg/JScoreboards. If you are using someone else's plugin instead of developing your own, report this issue to them.");
+    }
   }
 
   // MARK: Public API
@@ -33,6 +43,8 @@ public abstract class JScoreboard {
    * @param player The player to add
    */
   public void addPlayer(Player player) {
+    if (activePlayers.contains(player.getUniqueId())) return;
+
     this.activePlayers.add(player.getUniqueId());
   }
 
@@ -157,7 +169,7 @@ public abstract class JScoreboard {
    * @throws ScoreboardLineTooLongException If a String within the lines array is over 64 characters, this exception is thrown.
    */
   protected void updateScoreboard(Scoreboard scoreboard, List<String> lines) throws ScoreboardLineTooLongException {
-    Objective objective = wrapper.getDummyObjective(scoreboard);
+    Objective objective = objectiveWrapper.getDummyObjective(scoreboard);
 
     Validate.notNull(objective);
 
@@ -200,20 +212,20 @@ public abstract class JScoreboard {
     Objective healthObjective;
 
     if (options.getTabHealthStyle() != JScoreboardTabHealthStyle.NONE) {
-      healthObjective = wrapper.getTabHealthObjective(options.getTabHealthStyle().toWrapped(), scoreboard);
+      healthObjective = objectiveWrapper.getTabHealthObjective(options.getTabHealthStyle().toWrapped(), scoreboard);
       healthObjective.setDisplaySlot(DisplaySlot.PLAYER_LIST);
     } else {
-      healthObjective = wrapper.getTabHealthObjective(options.getTabHealthStyle().toWrapped(), scoreboard);
+      healthObjective = objectiveWrapper.getTabHealthObjective(options.getTabHealthStyle().toWrapped(), scoreboard);
       if (healthObjective != null) {
         healthObjective.unregister();
       }
     }
 
     if (options.shouldShowHealthUnderName()) {
-      healthObjective = wrapper.getNameHealthObjective(scoreboard);
+      healthObjective = objectiveWrapper.getNameHealthObjective(scoreboard);
       healthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
     } else {
-      healthObjective = wrapper.getNameHealthObjective(scoreboard);
+      healthObjective = objectiveWrapper.getNameHealthObjective(scoreboard);
       if (healthObjective != null) {
         healthObjective.unregister();
       }
@@ -288,8 +300,16 @@ public abstract class JScoreboard {
     return colorCodeOptions;
   }
 
-  protected JScoreboardWrapper getWrapper() {
-    return wrapper;
+  protected List<UUID> getActivePlayers() {
+    return activePlayers;
+  }
+
+  protected InternalObjectiveWrapper getObjectiveWrapper() {
+    return objectiveWrapper;
+  }
+
+  protected InternalTeamWrapper getTeamWrapper() {
+    return teamWrapper;
   }
 
   /**

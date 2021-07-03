@@ -29,13 +29,26 @@
 
         <dependency>
             <groupId>dev.jcsoftware</groupId>
-            <artifactId>JScoreboards-1_16</artifactId>
+            <artifactId>jscoreboards-1_8-1_12</artifactId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>dev.jcsoftware</groupId>
-            <artifactId>JScoreboards-1_8</artifactId>
+            <artifactId>jscoreboards-1_13</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.jcsoftware</groupId>
+            <artifactId>jscoreboards-1_14-1_17</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.jcsoftware</groupId>
+            <artifactId>team-support-1_12</artifactId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -47,6 +60,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>14</source>
+                    <target>14</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

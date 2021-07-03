@@ -19,7 +19,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: dev.jcsoftware:JScoreboards-abstraction:1.0.1-RELEASE" level="project" />
-    <orderEntry type="module" module-name="JScoreboards-1_16" />
+    <orderEntry type="module" module-name="JScoreboards-1_14-1_17" />
     <orderEntry type="module" module-name="JScoreboards-1_8" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-lang:commons-lang:2.6" level="project" />

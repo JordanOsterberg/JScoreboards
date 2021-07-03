@@ -92,7 +92,7 @@ public class JGlobalScoreboard extends JScoreboard {
 
     scoreboard = scoreboardManager.getNewScoreboard();
 
-    for (UUID playerUUID : activePlayers) {
+    for (UUID playerUUID : getActivePlayers()) {
       Player player = Bukkit.getPlayer(playerUUID);
 
       if (player != null) {
