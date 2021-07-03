@@ -26,6 +26,8 @@ public abstract class JScoreboard {
 
   private final Map<Scoreboard, List<String>> previousLinesMap = new HashMap<>();
 
+  private final int maxLineLength;
+
   public JScoreboard() {
     try {
       objectiveWrapper = SpigotAPIVersion.getCurrent().makeObjectiveWrapper();
@@ -33,6 +35,12 @@ public abstract class JScoreboard {
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
       e.printStackTrace();
       Bukkit.getLogger().severe("Failed to initialize JScoreboards- please send the full stacktrace above to https://github.com/JordanOsterberg/JScoreboards. If you are using someone else's plugin instead of developing your own, report this issue to them.");
+    }
+
+    if (SpigotAPIVersion.getCurrent().lessThan(SpigotAPIVersion.v1_13)) {
+      maxLineLength = 32;
+    } else {
+      maxLineLength = 64;
     }
   }
 
@@ -236,22 +244,37 @@ public abstract class JScoreboard {
     int score = 1;
 
     for (String entry : reversedLines) {
-      if (entry.length() > 64) {
+      if (entry.length() > maxLineLength) {
         throw new ScoreboardLineTooLongException(entry);
       }
 
       Team team = scoreboard.getTeam("line" + score);
 
+      String prefix;
+      String suffix = "";
+
+      if (SpigotAPIVersion.getCurrent().lessThan(SpigotAPIVersion.v1_13)) {
+        if (entry.length() <= 16) {
+          prefix = entry;
+        } else {
+          prefix = entry.substring(0, 16);
+          suffix = entry.substring(16);
+        }
+      } else {
+        prefix = entry;
+      }
+
       if (team != null) {
-        team.setPrefix(color(entry));
         team.getEntries().forEach(team::removeEntry);
         team.addEntry(colorCodeOptions.get(score));
       } else {
         team = scoreboard.registerNewTeam("line" + score);
         team.addEntry(colorCodeOptions.get(score));
-        team.setPrefix(color(entry));
         objective.getScore(colorCodeOptions.get(score)).setScore(score);
       }
+
+      team.setPrefix(color(prefix));
+      team.setSuffix(color(suffix));
 
       score += 1;
     }

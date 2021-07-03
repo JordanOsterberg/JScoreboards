@@ -8,30 +8,33 @@ import org.bukkit.Bukkit;
 import java.lang.reflect.InvocationTargetException;
 
 public enum SpigotAPIVersion {
-  v1_8(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_8_v1_11.class),
-  v1_9(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_8_v1_11.class),
-  v1_10(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_8_v1_11.class),
-  v1_11(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_8_v1_11.class),
+  v1_8(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_8_v1_11.class, 0),
+  v1_9(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_8_v1_11.class, 1),
+  v1_10(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_8_v1_11.class, 2),
+  v1_11(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_8_v1_11.class, 3),
 
-  v1_12(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_12.class),
+  v1_12(ObjectiveWrapper_v1_8_v1_12.class, TeamWrapper_v1_12.class, 4),
 
-  v1_13(ObjectiveWrapper_v1_13.class, TeamWrapper_v1_13.class),
+  v1_13(ObjectiveWrapper_v1_13.class, TeamWrapper_v1_13.class, 5),
 
-  v1_14(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class),
-  v1_15(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class),
-  v1_16(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class),
-  v1_17(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class);
+  v1_14(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class, 6),
+  v1_15(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class, 7),
+  v1_16(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class, 8),
+  v1_17(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class, 9);
 
   SpigotAPIVersion(
       Class<? extends InternalObjectiveWrapper> internalObjectiveWrapperClass,
-      Class<? extends InternalTeamWrapper> internalTeamWrapperClass
+      Class<? extends InternalTeamWrapper> internalTeamWrapperClass,
+      int index
   ) {
     this.internalObjectiveWrapperClass = internalObjectiveWrapperClass;
     this.internalTeamWrapperClass = internalTeamWrapperClass;
+    this.index = index;
   }
 
   Class<? extends InternalObjectiveWrapper> internalObjectiveWrapperClass;
   Class<? extends InternalTeamWrapper> internalTeamWrapperClass;
+  int index;
 
   /**
    * The current server version this server is running on.
@@ -42,6 +45,10 @@ public enum SpigotAPIVersion {
 
   public static SpigotAPIVersion getCurrent() {
     return current;
+  }
+
+  public boolean lessThan(SpigotAPIVersion otherVersion) {
+    return this.index < otherVersion.index;
   }
 
   static {
