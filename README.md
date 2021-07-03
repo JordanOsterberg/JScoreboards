@@ -35,7 +35,7 @@ To support multiple Spigot/Bukkit versions, the project utilizes an abstraction 
 
 Simply, the project is organized like this:
 - `api` module, responsible for user facing JScoreboards API. This API is extremely stable and will not change between versions unless necessary.
-This module also contains a `VersionMatcher` class which decides which Spigot API to communicate with at runtime.
+This module also contains a `SpigotAPIVersion` enum which decides which internal implementations to communicate with at runtime.
 - `abstraction` module, which defines the requirements for a version specific implementation of certain internal API (generally revolving around registering and handling Minecraft `Scoreboard` objectives.)
 
 With these two modules in place, version specific implementations can be written:
