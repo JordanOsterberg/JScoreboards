@@ -16,16 +16,14 @@ Otherwise, you can take a look at the [wiki](https://github.com/JordanOsterberg/
 </repository>
 ```
 
-**Dependency (type the latest version in for version tag)**
+**Dependency**
 ```
 <dependency>
     <groupId>com.github.JordanOsterberg</groupId>
     <artifactId>JScoreboards</artifactId>
-    <version></version>
+    <version>2.0.0-RELEASE</version>
 </dependency>
 ```
-
-[![](https://jitpack.io/v/JordanOsterberg/JScoreboards.svg)](https://jitpack.io/#JordanOsterberg/JScoreboards)
 
 See [JitPack](https://jitpack.io/#JordanOsterberg/JScoreboards) for more information / the most up-to-date versioning if you're having trouble. 
 
