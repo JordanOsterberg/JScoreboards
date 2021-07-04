@@ -7,25 +7,26 @@ If you'd like a video tutorial on how this API works, I have a [YouTube video](h
 Otherwise, you can take a look at the [wiki](https://github.com/JordanOsterberg/JScoreboards/wiki).
  
 ## Maven Repository
+Please note- as of version 2.0.3 the Maven repository has changed. Update your pom.xml accordingly:
 
 **Repository**:
 ```
 <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
+    <id>jordanosterberg-repo</id>
+    <url>https://nexus-repo.jordanosterberg.com/repository/maven-releases/</url>
 </repository>
 ```
 
 **Dependency**
 ```
 <dependency>
-    <groupId>com.github.JordanOsterberg</groupId>
+    <groupId>dev.jcsoftware</groupId>
     <artifactId>JScoreboards</artifactId>
-    <version>2.0.0-RELEASE</version>
+    <version>2.0.3-RELEASE</version>
 </dependency>
 ```
 
-See [JitPack](https://jitpack.io/#JordanOsterberg/JScoreboards) for more information / the most up-to-date versioning if you're having trouble. 
+If you're having trouble, please submit a GitHub issue. The self hosted Maven repo gig is new to me :]
 
 See [LICENSE.md](LICENSE.md) for license information.
 
@@ -48,4 +49,4 @@ That being said, the only *tested* versions are as follows:
 - 1.16
 - 1.17
 
-It is unlikely that you will encounter any issues with other versions given how the API operates under the hood (no NMS, packets, etc). However, as in all software, there will be issues and bugs. Open a GitHub issue if you find something that needs to be fixed.
+It is unlikely you will encounter any issues with other versions given how the API operates under the hood (no NMS, packets, etc). However, as in all software, there will be issues and bugs. Open a GitHub issue if you find something that needs to be fixed.

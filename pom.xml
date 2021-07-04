@@ -51,6 +51,13 @@
         </pluginManagement>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>jordanosterberg-repo</id>
+            <url>https://nexus-repo.jordanosterberg.com/repository/maven-releases/</url>
+        </repository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>spigot-repo</id>
