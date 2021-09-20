@@ -20,6 +20,7 @@ public final class JPerPlayerMethodBasedScoreboard extends JPerPlayerScoreboard 
   }
 
   private String getTitle(Player player) {
+    if (player == null) return "";
     return playerToTitleMap.getOrDefault(player.getUniqueId(), "");
   }
 
@@ -29,6 +30,7 @@ public final class JPerPlayerMethodBasedScoreboard extends JPerPlayerScoreboard 
   }
 
   private List<String> getLines(Player player) {
+    if (player == null) return Collections.emptyList();
     return playerToLinesMap.get(player.getUniqueId());
   }
 
