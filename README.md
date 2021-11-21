@@ -23,6 +23,7 @@ Please note- as of version 2.0.3 the Maven repository has changed. Update your p
     <groupId>dev.jcsoftware</groupId>
     <artifactId>JScoreboards</artifactId>
     <version>2.1.2-RELEASE</version>
+    <scope>dependency</scope>
 </dependency>
 ```
 
