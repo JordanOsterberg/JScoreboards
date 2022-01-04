@@ -20,7 +20,7 @@
     <parent>
         <groupId>dev.jcsoftware</groupId>
         <artifactId>JScoreboards-parent</artifactId>
-        <version>2.1.2-RELEASE</version>
+        <version>2.1.4-RELEASE</version>
     </parent>
 
     <artifactId>team-support-1_12</artifactId>

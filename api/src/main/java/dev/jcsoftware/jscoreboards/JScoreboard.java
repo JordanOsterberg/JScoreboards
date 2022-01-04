@@ -211,7 +211,8 @@ public abstract class JScoreboard {
       }
     }
 
-    previousLinesMap.put(scoreboard, lines);
+    // This is a copy instead of reference to prevent previousLinesMap equality check from unexpectedly failing
+    previousLinesMap.put(scoreboard, new ArrayList<>(lines));
 
     List<String> reversedLines = new ArrayList<>(lines);
     Collections.reverse(reversedLines);
