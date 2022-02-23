@@ -17,10 +17,11 @@ public enum SpigotAPIVersion {
 
   v1_13(ObjectiveWrapper_v1_13.class, TeamWrapper_v1_13.class, 5),
 
-  v1_14(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class, 6),
-  v1_15(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class, 7),
-  v1_16(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class, 8),
-  v1_17(ObjectiveWrapper_v1_14_v1_17.class, TeamWrapper_v1_14_v1_17.class, 9);
+  v1_14(ObjectiveWrapper_v1_14_v1_18.class, TeamWrapper_v1_14_v1_18.class, 6),
+  v1_15(ObjectiveWrapper_v1_14_v1_18.class, TeamWrapper_v1_14_v1_18.class, 7),
+  v1_16(ObjectiveWrapper_v1_14_v1_18.class, TeamWrapper_v1_14_v1_18.class, 8),
+  v1_17(ObjectiveWrapper_v1_14_v1_18.class, TeamWrapper_v1_14_v1_18.class, 9),
+  v1_18(ObjectiveWrapper_v1_14_v1_18.class, TeamWrapper_v1_14_v1_18.class, 10);
 
   SpigotAPIVersion(
       Class<? extends InternalObjectiveWrapper> internalObjectiveWrapperClass,
