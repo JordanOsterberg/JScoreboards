@@ -7,7 +7,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Scoreboard;
 
-public final class ObjectiveWrapper_v1_14_v1_17 extends InternalObjectiveWrapper {
+public final class ObjectiveWrapper_v1_14_v1_18 extends InternalObjectiveWrapper {
   @Override
   public Objective getNameHealthObjective(Scoreboard scoreboard) {
     Objective healthObjective = scoreboard.getObjective("nameHealth");

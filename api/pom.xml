@@ -7,7 +7,7 @@
     <parent>
         <groupId>dev.jcsoftware</groupId>
         <artifactId>JScoreboards-parent</artifactId>
-        <version>2.1.4-RELEASE</version>
+        <version>2.1.5-RELEASE</version>
     </parent>
 
     <artifactId>JScoreboards</artifactId>
@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>dev.jcsoftware</groupId>
-            <artifactId>jscoreboards-1_14-1_17</artifactId>
+            <artifactId>jscoreboards-1_14-1_18</artifactId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -50,6 +50,12 @@
             <groupId>dev.jcsoftware</groupId>
             <artifactId>team-support-1_12</artifactId>
             <version>${project.parent.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.jcsoftware</groupId>
+            <artifactId>jscoreboards-1_14-1_18</artifactId>
+            <version>2.1.5-RELEASE</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
