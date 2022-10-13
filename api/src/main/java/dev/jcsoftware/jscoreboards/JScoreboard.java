@@ -279,6 +279,22 @@ public abstract class JScoreboard {
         team.addEntry(colorCodeOptions.get(score));
         objective.getScore(colorCodeOptions.get(score)).setScore(score);
       }
+      
+      for(UUID uuid : getActivePlayers()) {
+        if(this.options.getTabHealthStyle() != JScoreboardTabHealthStyle.NUMBER) {
+          Team teamN = scoreboard.getTeam("healN");
+        
+          if(teamN == null) {
+            team = scoreboard.registerNewTeam("healN");
+          }
+          
+          Player player = Bukkit.getPlayer(uuid);
+          int hp_level = (int) player.getHealth();
+        
+          team.getScore(player.getName()).setScore(hp_level);
+          team.setDisplaySlot(DisplaySlot.PLAYER_LIST);
+        }
+      }
 
       team.setPrefix(prefix);
       team.setSuffix(suffix);
