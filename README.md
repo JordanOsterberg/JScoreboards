@@ -12,8 +12,8 @@ Please note- as of version 2.0.3 the Maven repository has changed. Update your p
 **Repository**:
 ```xml
 <repository>
-    <id>jordanosterberg-repo</id>
-    <url>https://nexus-repo.jordanosterberg.com/repository/maven-releases/</url>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
 </repository>
 ```
 
@@ -22,7 +22,7 @@ Please note- as of version 2.0.3 the Maven repository has changed. Update your p
 <dependency>
     <groupId>dev.jcsoftware</groupId>
     <artifactId>JScoreboards</artifactId>
-    <version>2.1.5-RELEASE</version>
+    <version>2.1.4-RELEASE</version>
 </dependency>
 ```
 
